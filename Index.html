@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบบุคลากร — สำนักงานที่ดินจังหวัดปราจีนบุรี</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g50:#f0faf4;--g100:#d4eddf;--g200:#a8dbbf;--g300:#6dc49a;
+  --g400:#2e9b62;--g500:#1f7d4e;--g600:#165f3a;--g700:#0e4228;--g800:#082a18;
+  --white:#fff;--off:#f7fbf8;--bdr:#c0e4cf;--bdr2:#8ecfaa;
+  --tx:#082a18;--tx2:#165f3a;--tx3:#2e9b62;
+  --red:#c0392b;--red-lt:#fdecea;--blue:#1a6aaa;--blue-lt:#e6f1fa;
+  --amber:#b7780a;--amber-lt:#fdf3d7;
+}
+body{font-family:'Sarabun','Segoe UI',sans-serif;background:var(--off);color:var(--tx);font-size:14px;line-height:1.5}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sb{width:215px;flex-shrink:0;background:var(--g700);display:flex;flex-direction:column}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
+.topbar h1{font-size:15px;font-weight:600;flex:1;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.content{flex:1;overflow-y:auto;padding:18px}
+.pg{display:none}.pg.on{display:block}
+
+.sb-head{padding:16px 14px 12px;border-bottom:1px solid var(--g600)}
+.sb-seal{display:flex;align-items:center;gap:10px}
+.seal-icon{width:42px;height:42px;border-radius:50%;background:var(--g500);border:2px solid var(--g300);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.sb-org{font-size:12px;font-weight:600;color:#fff;line-height:1.35}
+.sb-sub{font-size:10px;color:var(--g200);margin-top:1px}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.nl{font-size:10px;font-weight:600;color:var(--g300);text-transform:uppercase;letter-spacing:.7px;padding:8px 8px 3px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;cursor:pointer;color:var(--g100);font-size:13px;margin-bottom:2px;transition:background .12s;user-select:none}
+.ni:hover{background:var(--g600)}.ni.on{background:var(--g500);color:#fff;font-weight:600}
+.ni .ic{width:16px;height:16px;flex-shrink:0}
+.sb-foot{padding:10px;border-top:1px solid var(--g600)}
+.up{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--g600);border-radius:8px}
+.up-av{width:30px;height:30px;border-radius:50%;background:var(--g400);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+
+.sc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.sc{background:var(--white);border:1px solid var(--bdr);border-radius:9px;padding:13px 15px}
+.sc.hi{background:var(--g600);border-color:var(--g600)}
+.sc .lb{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--tx3);margin-bottom:5px}
+.sc.hi .lb{color:var(--g200)}
+.sc .vl{font-size:26px;font-weight:600;color:var(--tx)}
+.sc.hi .vl{color:#fff}
+.sc .sb2{font-size:11px;color:var(--tx2);margin-top:3px}
+.sc.hi .sb2{color:var(--g200)}
+
+.tw{background:var(--white);border:1px solid var(--bdr);border-radius:9px;overflow:hidden}
+.ttb{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+.sbox{display:flex;align-items:center;gap:6px;background:var(--g50);border:1px solid var(--bdr);border-radius:7px;padding:5px 9px;flex:1;min-width:160px;max-width:260px}
+.sbox input{border:none;background:transparent;font-size:13px;color:var(--tx);outline:none;width:100%;font-family:inherit}
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:4px 11px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--white);color:var(--tx2);transition:all .12s;user-select:none}
+.pill.on{background:var(--g600);color:#fff;border-color:var(--g600)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:9px 13px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--tx3);background:var(--g50);border-bottom:1px solid var(--bdr);white-space:nowrap}
+td{padding:10px 13px;font-size:13px;color:var(--tx);border-bottom:1px solid #edf7f1;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--g50);cursor:pointer}
+.ac{display:flex;align-items:center;gap:9px}
+.em{font-weight:600;font-size:13px}
+.ep{font-size:11px;color:var(--tx2)}
+.tb{display:inline-flex;align-items:center;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap}
+.t1{background:#dff5ec;color:#0a5c35}.t2{background:var(--blue-lt);color:#0e4a7a}
+.t3{background:var(--amber-lt);color:#7a5300}.t4{background:var(--red-lt);color:#8b1e1e}
+.sdot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.s-ok{background:#2e9b62}.s-lv{background:#e0a020}.s-re{background:#c0392b}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .12s}
+.btn-p{background:var(--g500);color:#fff}.btn-p:hover{background:var(--g600)}
+.btn-o{background:transparent;color:var(--g600);border:1px solid var(--bdr);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;padding:7px 14px;border-radius:7px}
+.btn-o:hover{background:var(--g50)}
+.btn-red{background:transparent;color:var(--red);border:1px solid #f5b8b8;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px}
+.btn-red:hover{background:var(--red-lt)}
+.yr-badge{background:var(--g50);border:1px solid var(--bdr);border-radius:16px;padding:4px 12px;font-size:11px;color:var(--tx2);font-weight:600;display:flex;align-items:center;gap:5px}
+.yr-dot{width:7px;height:7px;border-radius:50%;background:var(--g400)}
+.view-btn,.edit-btn{padding:4px 9px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;border:1px solid var(--bdr)}
+.view-btn{background:var(--white);color:var(--tx2)}.view-btn:hover{background:var(--g50)}
+.edit-btn{background:var(--g50);color:var(--g700);border-color:var(--g200)}.edit-btn:hover{background:var(--g100)}
+.tabs{display:flex;gap:2px;background:var(--g50);border:1px solid var(--bdr);border-radius:9px;padding:3px;margin-bottom:14px;width:fit-content;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer;color:var(--tx2);font-weight:600;transition:all .12s;user-select:none}
+.tab.on{background:var(--white);color:var(--g700)}
+
+.org-wrap{overflow-x:auto;padding:8px 0}
+.org-tree{display:flex;flex-direction:column;align-items:center;min-width:900px}
+.ol{display:flex;justify-content:center;gap:10px;padding:10px 0}
+.on2{background:var(--white);border:1.5px solid var(--bdr);border-radius:10px;padding:11px 13px;text-align:center;min-width:130px}
+.on2.hd{background:var(--g700);border-color:var(--g700)}
+.on2.hd2{background:var(--g600);border-color:var(--g600)}
+.on2.dp{background:var(--g50);border-color:var(--bdr2)}
+.on2.br{border-color:var(--g300)}
+.on-av{width:36px;height:36px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;background:var(--g500);overflow:hidden}
+.on-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.on-sm{width:28px;height:28px;font-size:10px}
+.on-t{font-size:12px;font-weight:600;color:var(--tx);line-height:1.3}
+.on2.hd .on-t,.on2.hd2 .on-t{color:#fff}
+.on-n{font-size:10px;color:var(--tx2);margin-top:2px}
+.on2.hd .on-n,.on2.hd2 .on-n{color:var(--g200)}
+.on-cnt{font-size:10px;color:var(--tx3);margin-top:3px}
+.on-badge{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:600;background:var(--g100);color:var(--g700)}
+.on2.hd .on-badge,.on2.hd2 .on-badge{background:var(--g500);color:#fff}
+.cv{width:2px;background:var(--bdr);margin:0 auto;height:16px}
+.ch{height:2px;background:var(--bdr);margin:0 auto}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(4,20,9,.5);z-index:200;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:100%;max-width:540px;margin:auto;overflow:hidden}
+.modal-head{background:var(--g700);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.modal-head h2{font-size:15px;font-weight:600;color:#fff}
+.close-x{background:none;border:none;cursor:pointer;color:var(--g200);font-size:22px;line-height:1;padding:0}
+.modal-body{padding:20px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgroup{display:flex;flex-direction:column;gap:4px}
+.fgroup.full{grid-column:1/-1}
+.fgroup label{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px}
+.fgroup input,.fgroup select,.fgroup textarea{padding:8px 10px;border:1px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit;color:var(--tx);background:var(--white);outline:none;width:100%}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--g400);box-shadow:0 0 0 2px rgba(46,155,98,.15)}
+.fgroup textarea{resize:vertical;min-height:60px}
+.photo-zone{border:2px dashed var(--bdr2);border-radius:9px;padding:18px;text-align:center;cursor:pointer;background:var(--g50);position:relative;transition:border-color .15s}
+.photo-zone:hover{border-color:var(--g400)}
+.pz-preview{width:90px;height:110px;border-radius:7px;object-fit:cover;border:2px solid var(--g200);margin:0 auto 8px;display:block}
+.pz-icon{font-size:32px;margin-bottom:8px}
+.pz-txt{font-size:12px;color:var(--tx2);font-weight:600}
+.pz-sub{font-size:11px;color:var(--tx3);margin-top:3px}
+.pz-file{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.fa{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;grid-column:1/-1}
+
+.dm-hero{background:var(--g700);padding:20px 22px;display:flex;gap:16px;align-items:flex-start}
+.dm-photo{width:82px;height:100px;border-radius:8px;object-fit:cover;border:2px solid var(--g400);flex-shrink:0}
+.dm-init{width:82px;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;color:#fff;flex-shrink:0}
+.dm-name{font-size:17px;font-weight:600;color:#fff}
+.dm-pos{font-size:12px;color:var(--g200);margin-top:2px}
+.dm-body{padding:16px 20px}
+.sec-ttl{font-size:11px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdr)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.ir{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-bottom:.5px solid var(--g50)}
+.ir-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px}
+.ir-val{font-size:13px;color:var(--tx);font-weight:600}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
+.bar-lbl{width:130px;color:var(--tx2);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-bg{flex:1;background:var(--g100);border-radius:3px;height:9px}
+.bar-fill{border-radius:3px;height:9px}
+.bar-val{min-width:28px;text-align:right;font-weight:600;color:var(--tx)}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rep-card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:16px}
+.rep-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:12px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g700);color:#fff;padding:12px 20px;border-radius:9px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{background:var(--red)}
+
+/* LOADING */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--g100);border-top-color:var(--g500);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--tx2);font-weight:600}
+
+/* SETUP BANNER */
+.setup-banner{background:var(--amber-lt);border:1px solid #f5d898;border-radius:9px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px}
+.setup-banner .sb-icon{font-size:22px;flex-shrink:0}
+.setup-banner h3{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px}
+.setup-banner p{font-size:12px;color:#7a5300}
+.setup-banner code{background:#ffe8a0;padding:1px 6px;border-radius:4px;font-family:monospace;font-size:11px}
+
+@media(max-width:900px){
+  .sb{width:52px}.sb-org,.sb-sub,.nl,.ni span,.up-name,.up-role{display:none}
+  .ni{justify-content:center;padding:10px 0}.sc-row{grid-template-columns:1fr 1fr}.rep-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ⚠️ ตั้งค่า URL ของ Google Apps Script ที่นี่ -->
+<script>
+  const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+  // วาง URL ที่ได้จากการ Deploy Apps Script แทน YOUR_APPS_SCRIPT_URL_HERE
+  // ตัวอย่าง: const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+</script>
+
+<div class="shell">
+<div class="sb">
+  <div class="sb-head">
+    <div class="sb-seal">
+      <div class="seal-icon">🏛️</div>
+      <div>
+        <div class="sb-org">สำนักงานที่ดิน<br>จังหวัดปราจีนบุรี</div>
+        <div class="sb-sub">กรมที่ดิน</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">เมนูหลัก</div>
+    <div class="ni on" onclick="gp('dash',this)">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>ภาพรวม</span>
+    </div>
+    <div class="ni" onclick="gp('staff',this)">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>ทะเบียนบุคลากร</span>
+    </div>
+    <div class="ni" onclick="gp('org',this)">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      <span>โครงสร้างองค์กร</span>
+    </div>
+    <div class="ni" onclick="gp('rep',this)">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      <span>รายงาน / สถิติ</span>
+    </div>
+    <div class="nl">จัดการข้อมูล</div>
+    <div class="ni" onclick="openAdd()">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      <span>เพิ่มบุคลากร</span>
+    </div>
+    <div class="ni" onclick="loadData()">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      <span>รีเฟรชข้อมูล</span>
+    </div>
+    <div class="ni" onclick="exportCSV()">
+      <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      <span>Export CSV</span>
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <div class="up">
+      <div class="up-av">ผอ</div>
+      <div><div style="font-size:12px;color:#fff;font-weight:600">ผู้ดูแลระบบ</div><div style="font-size:10px;color:var(--g200)" id="sync-status">กำลังโหลด...</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="ptitle">ภาพรวมบุคลากร — สำนักงานที่ดินจังหวัดปราจีนบุรี</h1>
+    <div class="yr-badge"><span class="yr-dot"></span><span id="sync-time">กำลังโหลด...</span></div>
+    <button class="btn btn-p" onclick="openAdd()">+ เพิ่มบุคลากร</button>
+  </div>
+  <div class="content">
+
+  <div id="pg-dash" class="pg on">
+    <div id="setup-warn"></div>
+    <div class="sc-row" id="dash-stats">
+      <div class="sc hi"><div class="lb">บุคลากรทั้งหมด</div><div class="vl">—</div><div class="sb2">กำลังโหลด...</div></div>
+      <div class="sc"><div class="lb">ข้าราชการ</div><div class="vl">—</div></div>
+      <div class="sc"><div class="lb">พนักงานราชการ</div><div class="vl">—</div></div>
+      <div class="sc"><div class="lb">ลูกจ้าง</div><div class="vl">—</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="tw" style="padding:15px"><div style="font-size:13px;font-weight:600;margin-bottom:12px">สัดส่วนตามประเภท</div><div id="chart-type"><div style="color:var(--tx3);font-size:12px">กำลังโหลด...</div></div></div>
+      <div class="tw" style="padding:15px"><div style="font-size:13px;font-weight:600;margin-bottom:12px">บุคลากรตามฝ่าย/กลุ่ม</div><div id="chart-dept"><div style="color:var(--tx3);font-size:12px">กำลังโหลด...</div></div></div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">รายการล่าสุด</div>
+    <div class="tw"><table><thead><tr><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>สถานะ</th></tr></thead><tbody id="rec-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">กำลังโหลด...</td></tr></tbody></table></div>
+  </div>
+
+  <div id="pg-staff" class="pg">
+    <div class="tabs" id="ftabs">
+      <div class="tab on" onclick="ft('all',this)">ทั้งหมด</div>
+      <div class="tab" onclick="ft('gov',this)">ข้าราชการ</div>
+      <div class="tab" onclick="ft('emp',this)">พนักงานราชการ</div>
+      <div class="tab" onclick="ft('perm',this)">ลูกจ้างประจำ</div>
+      <div class="tab" onclick="ft('tmp',this)">ลูกจ้างชั่วคราว</div>
+    </div>
+    <div class="tw">
+      <div class="ttb">
+        <div class="sbox">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--tx3)"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="search-inp" placeholder="ค้นหาชื่อ ตำแหน่ง ฝ่าย..." oninput="renderStaff()">
+        </div>
+        <div class="pills">
+          <span class="pill on" onclick="fp('all',this)">ทั้งหมด</span>
+          <span class="pill" onclick="fp('ปฏิบัติงาน',this)">ปฏิบัติงาน</span>
+          <span class="pill" onclick="fp('ลา',this)">ลา</span>
+        </div>
+        <button class="btn btn-p" onclick="openAdd()" style="margin-left:auto">+ เพิ่มบุคลากร</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th style="width:44px">รูป</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>ระดับ</th><th>วันบรรจุ</th><th>สถานะ</th><th style="width:110px"></th></tr></thead>
+          <tbody id="staff-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">กำลังโหลด...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="pg-org" class="pg">
+    <div class="tw" style="padding:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:14px;font-weight:600">แผนผังโครงสร้างองค์กร — สำนักงานที่ดินจังหวัดปราจีนบุรี</div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--tx2)">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--g700);display:inline-block"></span>ผู้บริหาร</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:var(--g50);border:1px solid var(--bdr2);display:inline-block"></span>ฝ่าย/กลุ่ม</span>
+        </div>
+      </div>
+      <div class="org-wrap" id="org-chart"><div style="text-align:center;padding:40px;color:var(--tx3)">กำลังโหลด...</div></div>
+    </div>
+  </div>
+
+  <div id="pg-rep" class="pg">
+    <div class="rep-grid">
+      <div class="rep-card">
+        <div class="rep-title">ความเคลื่อนไหว (เม.ย. 2568)</div>
+        <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--bdr)"><span style="color:var(--tx2)">บรรจุ/เริ่มงานใหม่</span><span style="font-weight:600;color:var(--g500)">— คน</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--bdr)"><span style="color:var(--tx2)">เกษียณอายุราชการ</span><span style="font-weight:600;color:var(--red)">— คน</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--bdr)"><span style="color:var(--tx2)">โอนย้าย (เข้า)</span><span style="font-weight:600;color:var(--g500)">— คน</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="color:var(--tx2)">สัญญาหมดอายุ</span><span style="font-weight:600;color:var(--amber)">— คน</span></div>
+        </div>
+        <button class="btn-o" style="width:100%;justify-content:center;margin-top:14px;display:flex" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
+      </div>
+      <div class="rep-card">
+        <div class="rep-title">อัตรากำลัง vs จริง</div>
+        <div id="rate-chart" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+      <div class="rep-card" style="grid-column:1/-1">
+        <div class="rep-title">แจ้งเตือน — บุคลากรที่ควรติดตาม</div>
+        <div id="alert-list" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modal-title">เพิ่มข้อมูลบุคลากร</h2><button class="close-x" onclick="closeModal('add-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="fgroup full">
+          <label>รูปถ่ายหน้าตรง</label>
+          <div class="photo-zone" id="pzone">
+            <div id="pz-inner">
+              <div class="pz-icon">📷</div>
+              <div class="pz-txt">คลิกเพื่ออัปโหลดรูปถ่ายหน้าตรง</div>
+              <div class="pz-sub">รองรับ JPG, PNG — ขนาดไม่เกิน 3 MB</div>
+            </div>
+            <input type="file" class="pz-file" id="photo-file" accept="image/*" onchange="previewPhoto(this)">
+          </div>
+        </div>
+        <div class="fgroup"><label>คำนำหน้า</label><select id="f-prefix"><option>นาย</option><option>นาง</option><option>นางสาว</option><option>ว่าที่ ร.ต.</option></select></div>
+        <div class="fgroup"><label>ประเภทบุคลากร *</label><select id="f-type"><option value="gov">ข้าราชการ</option><option value="emp">พนักงานราชการ</option><option value="perm">ลูกจ้างประจำ</option><option value="tmp">ลูกจ้างชั่วคราว</option></select></div>
+        <div class="fgroup"><label>ชื่อ *</label><input type="text" id="f-fname" placeholder="ชื่อจริง"></div>
+        <div class="fgroup"><label>นามสกุล *</label><input type="text" id="f-lname" placeholder="นามสกุล"></div>
+        <div class="fgroup full"><label>ตำแหน่ง *</label><input type="text" id="f-pos" placeholder="เช่น นักวิชาการที่ดินชำนาญการ"></div>
+        <div class="fgroup"><label>ฝ่าย / กลุ่ม *</label>
+          <select id="f-dept">
+            <option>ฝ่ายอำนวยการ</option><option>กลุ่มการเงินและบัญชี</option>
+            <option>ฝ่ายทะเบียน</option><option>ฝ่ายวิชาการและแผนที่</option>
+            <option>ฝ่ายรังวัดและทำแผนที่</option>
+            <option>สาขาอำเภอกบินทร์บุรี</option><option>สาขาอำเภอนาดี</option><option>สาขาอำเภอศรีมหาโพธิ</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>ระดับ / กลุ่มงาน</label><input type="text" id="f-level" placeholder="เช่น C5, GW3, ส3"></div>
+        <div class="fgroup"><label>เลขที่ตำแหน่ง</label><input type="text" id="f-posno" placeholder="เช่น 100001"></div>
+        <div class="fgroup"><label>เลขบัตรประชาชน</label><input type="text" id="f-pid" placeholder="x-xxxx-xxxxx-xx-x" maxlength="17"></div>
+        <div class="fgroup"><label>วันเกิด</label><input type="date" id="f-dob"></div>
+        <div class="fgroup"><label>วันบรรจุ / เริ่มงาน</label><input type="date" id="f-start"></div>
+        <div class="fgroup"><label>วันสิ้นสุดสัญญา</label><input type="date" id="f-end"></div>
+        <div class="fgroup"><label>วุฒิการศึกษา</label>
+          <select id="f-edu"><option>ประถมศึกษา</option><option>มัธยมศึกษา</option><option>ปวช.</option><option>ปวส.</option><option>ปริญญาตรี</option><option>ปริญญาโท</option><option>ปริญญาเอก</option></select>
+        </div>
+        <div class="fgroup"><label>สาขาวิชา</label><input type="text" id="f-major" placeholder="เช่น นิติศาสตร์, บัญชี"></div>
+        <div class="fgroup"><label>โทรศัพท์</label><input type="text" id="f-tel" placeholder="08x-xxx-xxxx"></div>
+        <div class="fgroup"><label>อีเมล</label><input type="text" id="f-email" placeholder="name@dol.go.th"></div>
+        <div class="fgroup"><label>สถานะ</label>
+          <select id="f-status"><option>ปฏิบัติงาน</option><option>ลาป่วย</option><option>ลากิจ</option><option>ลาพักผ่อน</option><option>ลาคลอด</option><option>ช่วยราชการ</option><option>เกษียณ</option></select>
+        </div>
+        <div class="fgroup"><label>เครื่องราชอิสริยาภรณ์</label><input type="text" id="f-medal" placeholder="เช่น ม.ว.ม., ต.ม., ต.ช."></div>
+        <div class="fgroup full"><label>ที่อยู่ปัจจุบัน</label><textarea id="f-addr" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
+        <div class="fgroup full"><label>ประวัติ / หมายเหตุ</label><textarea id="f-note" placeholder="ประวัติโอนย้าย, การอบรม, เครื่องราชฯ หรือข้อมูลเพิ่มเติม"></textarea></div>
+        <div class="fa">
+          <button class="btn-o" onclick="closeModal('add-modal')">ยกเลิก</button>
+          <button class="btn btn-p" id="save-btn" onclick="saveStaff()">💾 บันทึกข้อมูล</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-bg" id="view-modal">
+  <div class="modal" id="view-content" style="max-width:560px"></div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-txt" id="loader-txt">กำลังโหลดข้อมูล...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== CONFIG =====================
+const PAGES={dash:'ภาพรวมบุคลากร',staff:'ทะเบียนบุคลากรทั้งหมด',org:'โครงสร้างองค์กร',rep:'รายงาน / สถิติ'};
+const TBADGE={gov:'t1',emp:'t2',perm:'t3',tmp:'t4'};
+const TLABEL={gov:'ข้าราชการ',emp:'พนักงานราชการ',perm:'ลูกจ้างประจำ',tmp:'ลูกจ้างชั่วคราว'};
+const AVC={gov:'#1f7d4e',emp:'#1a6aaa',perm:'#b7780a',tmp:'#8b2e2e'};
+const DEPTS=['ฝ่ายอำนวยการ','กลุ่มการเงินและบัญชี','ฝ่ายทะเบียน','ฝ่ายวิชาการและแผนที่','ฝ่ายรังวัดและทำแผนที่'];
+
+let staffData=[], curType='all', curStatus='all', editId=null, photoURL='';
+
+// ===================== API =====================
+async function api(params){
+  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
+    showToast('⚠️ ยังไม่ได้ตั้งค่า SCRIPT_URL','err');
+    throw new Error('No SCRIPT_URL');
+  }
+  const url=new URL(SCRIPT_URL);
+  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+  const res=await fetch(url.toString());
+  const json=await res.json();
+  if(!json.ok) throw new Error(json.error||'API error');
+  return json.data;
+}
+
+async function apiPost(body){
+  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
+    showToast('⚠️ ยังไม่ได้ตั้งค่า SCRIPT_URL','err');
+    throw new Error('No SCRIPT_URL');
+  }
+  const res=await fetch(SCRIPT_URL,{
+    method:'POST',
+    body:JSON.stringify(body),
+    headers:{'Content-Type':'application/json'}
+  });
+  const json=await res.json();
+  if(!json.ok) throw new Error(json.error||'API error');
+  return json.data;
+}
+
+// ===================== DATA =====================
+async function loadData(){
+  showLoader('กำลังโหลดข้อมูลจาก Google Sheets...');
+  try {
+    if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
+      showSetupWarning();
+      hideLoader();
+      return;
+    }
+    staffData = await api({action:'getAll'});
+    const now=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('sync-time').textContent='อัปเดต '+now;
+    document.getElementById('sync-status').textContent='เชื่อมต่อแล้ว';
+    renderDash(); renderStaff();
+    if(document.getElementById('pg-org').classList.contains('on')) renderOrg();
+    showToast('โหลดข้อมูลสำเร็จ '+staffData.length+' คน');
+  } catch(e){
+    showToast('โหลดข้อมูลไม่สำเร็จ: '+e.message,'err');
+    document.getElementById('sync-status').textContent='ไม่สามารถเชื่อมต่อ';
+  }
+  hideLoader();
+}
+
+function showSetupWarning(){
+  document.getElementById('setup-warn').innerHTML=`
+    <div class="setup-banner">
+      <div class="sb-icon">⚙️</div>
+      <div>
+        <h3>ยังไม่ได้เชื่อมต่อ Google Sheets</h3>
+        <p>กรุณาทำตาม <strong>SETUP_GUIDE.txt</strong> เพื่อตั้งค่า Apps Script URL<br>
+        แล้วแก้ไข <code>SCRIPT_URL</code> ในไฟล์ HTML นี้ให้เป็น URL ที่ได้จากการ Deploy</p>
+      </div>
+    </div>`;
+}
+
+// ===================== UI HELPERS =====================
+function showLoader(txt){document.getElementById('loader-txt').textContent=txt||'กำลังดำเนินการ...';document.getElementById('loader').classList.add('show')}
+function hideLoader(){document.getElementById('loader').classList.remove('show')}
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(type==='err'?' err':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+function getInitials(f,l){return((f||'').charAt(0)+(l||'').charAt(0))}
+function avEl(p,type,f,l,sz,round){
+  sz=sz||36;const r=round?'50%':'7px';
+  if(p)return`<img src="${p}" style="width:${sz}px;height:${sz}px;border-radius:${r};object-fit:cover;border:1px solid var(--bdr);flex-shrink:0">`;
+  return`<div style="width:${sz}px;height:${sz}px;border-radius:${r};background:${AVC[type]||'#1f7d4e'};display:flex;align-items:center;justify-content:center;font-size:${sz>50?16:12}px;font-weight:600;color:#fff;flex-shrink:0">${getInitials(f,l)}</div>`;
+}
+function sBadge(st){const cl=st==='ปฏิบัติงาน'?'s-ok':st&&st.startsWith('ลา')?'s-lv':'s-re';return`<span class="sdot ${cl}"></span>${st||'—'}`}
+
+// ===================== NAVIGATION =====================
+function gp(id,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ptitle').textContent=PAGES[id]||id;
+  if(id==='dash') renderDash();
+  if(id==='staff') renderStaff();
+  if(id==='org') renderOrg();
+  if(id==='rep') renderRep();
+}
+function ft(t,el){document.querySelectorAll('#ftabs .tab').forEach(x=>x.classList.remove('on'));el.classList.add('on');curType=t;renderStaff()}
+function fp(s,el){document.querySelectorAll('.pills .pill').forEach(x=>x.classList.remove('on'));el.classList.add('on');curStatus=s;renderStaff()}
+
+// ===================== RENDER =====================
+function countBy(key){const m={};staffData.forEach(s=>{m[s[key]]=(m[s[key]]||0)+1});return m}
+
+function renderDash(){
+  const total=staffData.length;
+  const bt=countBy('type');
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="sc hi"><div class="lb">บุคลากรทั้งหมด</div><div class="vl">${total}</div><div class="sb2">ข้อมูล ณ ปัจจุบัน</div></div>
+    <div class="sc"><div class="lb">ข้าราชการ</div><div class="vl" style="color:var(--g500)">${bt.gov||0}</div><div class="sb2">${total?Math.round(((bt.gov||0)/total)*100):0}% ของทั้งหมด</div></div>
+    <div class="sc"><div class="lb">พนักงานราชการ</div><div class="vl" style="color:var(--blue)">${bt.emp||0}</div><div class="sb2">${total?Math.round(((bt.emp||0)/total)*100):0}% ของทั้งหมด</div></div>
+    <div class="sc"><div class="lb">ลูกจ้าง</div><div class="vl" style="color:var(--amber)">${(bt.perm||0)+(bt.tmp||0)}</div><div class="sb2">ประจำ ${bt.perm||0} / ชั่วคราว ${bt.tmp||0}</div></div>`;
+  const tc={gov:'var(--g400)',emp:'var(--blue)',perm:'var(--amber)',tmp:'var(--red)'};
+  document.getElementById('chart-type').innerHTML=Object.entries({gov:bt.gov||0,emp:bt.emp||0,perm:bt.perm||0,tmp:bt.tmp||0})
+    .map(([k,v])=>`<div class="bar-row"><span class="bar-lbl">${TLABEL[k]}</span><div class="bar-bg"><div class="bar-fill" style="width:${total?Math.round((v/total)*100):0}%;background:${tc[k]}"></div></div><span class="bar-val">${v}</span></div>`).join('');
+  const bd=countBy('dept');const mx=Math.max(...Object.values(bd),1);
+  document.getElementById('chart-dept').innerHTML=Object.entries(bd).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<div class="bar-row"><span class="bar-lbl">${k}</span><div class="bar-bg"><div class="bar-fill" style="width:${Math.round((v/mx)*100)}%;background:var(--g400)"></div></div><span class="bar-val">${v}</span></div>`).join('');
+  document.getElementById('rec-tbody').innerHTML=staffData.slice(0,5).map(s=>`<tr onclick="viewStaff('${s.id}')" style="cursor:pointer">
+    <td><div class="ac">${avEl(s.photo,s.type,s.fname,s.lname,30)}<div><div class="em">${s.prefix}${s.fname} ${s.lname}</div><div class="ep">${s.level}</div></div></div></td>
+    <td><span class="tb ${TBADGE[s.type]}">${TLABEL[s.type]}</span></td>
+    <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.pos}</td>
+    <td>${s.dept}</td>
+    <td>${sBadge(s.status)}</td>
+  </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">ยังไม่มีข้อมูล</td></tr>';
+}
+
+function renderStaff(){
+  const q=(document.getElementById('search-inp').value||'').toLowerCase();
+  const data=staffData.filter(s=>{
+    const tM=curType==='all'||s.type===curType;
+    const sM=curStatus==='all'||(curStatus==='ลา'?(s.status||'').startsWith('ลา'):s.status===curStatus);
+    const qM=!q||(s.fname+s.lname+s.pos+s.dept+s.level).toLowerCase().includes(q);
+    return tM&&sM&&qM;
+  });
+  document.getElementById('staff-tbody').innerHTML=data.length?data.map(s=>`<tr onclick="viewStaff('${s.id}')">
+    <td>${avEl(s.photo,s.type,s.fname,s.lname,36)}</td>
+    <td><div class="em">${s.prefix}${s.fname} ${s.lname}</div><div class="ep">${s.edu}${s.major?' · '+s.major:''}</div></td>
+    <td><span class="tb ${TBADGE[s.type]}">${TLABEL[s.type]}</span></td>
+    <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.pos}</td>
+    <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.dept}</td>
+    <td>${s.level}</td>
+    <td style="font-size:12px;color:var(--tx2);white-space:nowrap">${s.start||'—'}</td>
+    <td style="white-space:nowrap">${sBadge(s.status)}</td>
+    <td onclick="event.stopPropagation()"><button class="view-btn" onclick="viewStaff('${s.id}')">ดู</button> <button class="edit-btn" onclick="editStaff('${s.id}')">แก้ไข</button></td>
+  </tr>`).join(''):`<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">ไม่พบข้อมูล</td></tr>`;
+}
+
+function renderOrg(){
+  const head=staffData.find(s=>s.level==='C9')||staffData[0];
+  const dep2=staffData.find(s=>s.dept&&s.dept.includes('สาขา')&&s.level==='C8');
+  const deptNodes=DEPTS.map(d=>{
+    const chief=staffData.find(s=>s.dept===d&&s.type==='gov');
+    const cnt=staffData.filter(s=>s.dept===d).length;
+    const abbr={'ฝ่ายอำนวยการ':'อก','กลุ่มการเงินและบัญชี':'กง','ฝ่ายทะเบียน':'ทบ','ฝ่ายวิชาการและแผนที่':'วช','ฝ่ายรังวัดและทำแผนที่':'รว'}[d]||d.charAt(0);
+    return`<div style="display:flex;flex-direction:column;align-items:center"><div class="cv"></div>
+      <div class="on2 dp" style="min-width:130px">
+        <div class="on-av on-sm">${chief&&chief.photo?`<img src="${chief.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:abbr}</div>
+        <div class="on-t" style="font-size:11px">${d}</div>
+        <div class="on-n">${chief?chief.prefix+chief.fname+' '+chief.lname:'—'}</div>
+        <div class="on-cnt">${cnt} คน</div>
+      </div></div>`;}).join('');
+  const brCnt=staffData.filter(s=>s.dept&&s.dept.startsWith('สาขา')).length;
+  document.getElementById('org-chart').innerHTML=`<div class="org-tree">
+    <div class="ol"><div class="on2 hd" style="min-width:170px">
+      <div class="on-av" style="width:44px;height:44px">${head&&head.photo?`<img src="${head.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:getInitials(head?head.fname:'ผ',head?head.lname:'อ')}</div>
+      <div class="on-t">เจ้าพนักงานที่ดินจังหวัด</div>
+      <div class="on-n">${head?head.prefix+head.fname+' '+head.lname:'—'}</div>
+      <div class="on-badge">ข้าราชการ ${head?head.level:''}</div>
+    </div></div>
+    <div class="cv" style="height:20px"></div>
+    <div class="ch" style="width:70%"></div>
+    <div class="ol" style="padding-top:0">
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="cv"></div>
+        <div class="on2 hd2" style="min-width:155px">
+          <div class="on-av on-sm" style="background:var(--g400)">${dep2&&dep2.photo?`<img src="${dep2.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:dep2?getInitials(dep2.fname,dep2.lname):'รอง'}</div>
+          <div class="on-t" style="font-size:11px">เจ้าพนักงานที่ดินฯ (สาขา)</div>
+          <div class="on-n">${dep2?dep2.prefix+dep2.fname+' '+dep2.lname:'—'}</div>
+          <div class="on-badge">ข้าราชการ ${dep2?dep2.level:''}</div>
+        </div>
+      </div>
+    </div>
+    <div class="ch" style="width:90%"></div>
+    <div class="ol" style="padding-top:0">${deptNodes}</div>
+    ${brCnt>0?`<div class="ch" style="width:25%"></div>
+    <div class="ol" style="padding-top:0">
+      ${['กบินทร์บุรี','นาดี','ศรีมหาโพธิ'].map(b=>`<div style="display:flex;flex-direction:column;align-items:center"><div class="cv"></div>
+        <div class="on2 br" style="min-width:115px">
+          <div class="on-av on-sm" style="background:var(--g300)">สข</div>
+          <div class="on-t" style="font-size:11px">สาขา${b}</div>
+          <div class="on-cnt">${staffData.filter(s=>s.dept&&s.dept.includes(b)).length} คน</div>
+        </div></div>`).join('')}
+    </div>`:''}
+  </div>`;
+}
+
+function renderRep(){
+  const quotas={gov:60,emp:25,perm:8};
+  const bt=countBy('type');
+  document.getElementById('rate-chart').innerHTML=Object.entries(quotas).map(([k,q])=>{
+    const a=bt[k]||0;const pct=Math.round((a/q)*100);
+    const col=k==='gov'?'var(--g400)':k==='emp'?'var(--blue)':'var(--amber)';
+    return`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--tx2)">${TLABEL[k]}</span><span style="font-weight:600">${a}/${q} (${pct}%)</span></div>
+    <div style="background:var(--g100);border-radius:4px;height:11px"><div style="width:${Math.min(pct,100)}%;background:${col};border-radius:4px;height:11px"></div></div></div>`;}).join('');
+  const today=new Date();
+  const near1=staffData.filter(s=>{if(!s.dob)return false;const age=today.getFullYear()-parseInt(s.dob);return s.type==='gov'&&age>=59}).length;
+  const near3=staffData.filter(s=>{if(!s.dob)return false;const age=today.getFullYear()-parseInt(s.dob);return s.type==='gov'&&age>=57&&age<59}).length;
+  const exp=staffData.filter(s=>s.end&&new Date(s.end)<new Date(today.getFullYear(),today.getMonth()+6,1)).length;
+  const lv=staffData.filter(s=>s.status&&s.status.startsWith('ลา')).length;
+  document.getElementById('alert-list').innerHTML=`
+    <div style="background:var(--red-lt);border:1px solid #f5b8b8;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:600;color:var(--red)">${near1}</div><div style="font-size:12px;color:var(--red)">ใกล้เกษียณ &lt;1 ปี</div></div>
+    <div style="background:var(--amber-lt);border:1px solid #f5d898;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:600;color:var(--amber)">${near3}</div><div style="font-size:12px;color:var(--amber)">ใกล้เกษียณ 1-3 ปี</div></div>
+    <div style="background:var(--blue-lt);border:1px solid #b3d4f5;border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:600;color:var(--blue)">${exp}</div><div style="font-size:12px;color:var(--blue)">สัญญาหมด 6 เดือน</div></div>
+    <div style="background:var(--g50);border:1px solid var(--bdr);border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:600;color:var(--tx2)">${lv}</div><div style="font-size:12px;color:var(--tx2)">กำลังลาอยู่</div></div>`;
+}
+
+// ===================== CRUD =====================
+function viewStaff(id){
+  const s=staffData.find(x=>String(x.id)===String(id));if(!s)return;
+  document.getElementById('view-content').innerHTML=`
+    <div class="modal-head"><h2>ข้อมูลบุคลากร</h2><button class="close-x" onclick="closeModal('view-modal')">×</button></div>
+    <div class="dm-hero">
+      ${s.photo?`<img src="${s.photo}" class="dm-photo">`:`<div class="dm-init" style="background:${AVC[s.type]}">${getInitials(s.fname,s.lname)}</div>`}
+      <div style="flex:1;min-width:0">
+        <div class="dm-name">${s.prefix}${s.fname} ${s.lname}</div>
+        <div class="dm-pos">${s.pos}</div>
+        <div class="dm-pos">${s.dept}${s.level?' | ระดับ '+s.level:''}</div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="tb ${TBADGE[s.type]}">${TLABEL[s.type]}</span>
+          <span style="font-size:12px;color:var(--g200)">${sBadge(s.status)}</span>
+        </div>
+        ${s.medal?`<div style="margin-top:5px;font-size:11px;color:var(--g200)">เครื่องราช: ${s.medal}</div>`:''}
+      </div>
+    </div>
+    <div class="dm-body">
+      <div class="sec-ttl">ข้อมูลส่วนตัว</div>
+      <div class="info-grid">
+        <div class="ir"><div class="ir-lbl">เลขบัตรประชาชน</div><div class="ir-val">${s.pid||'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">วันเกิด</div><div class="ir-val">${s.dob?(s.dob+' (อายุ '+(new Date().getFullYear()-parseInt(s.dob))+' ปี)'):'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">วุฒิการศึกษา</div><div class="ir-val">${s.edu||'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">สาขาวิชา</div><div class="ir-val">${s.major||'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">โทรศัพท์</div><div class="ir-val">${s.tel||'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">อีเมล</div><div class="ir-val">${s.email||'—'}</div></div>
+      </div>
+      <div class="sec-ttl">ข้อมูลราชการ</div>
+      <div class="info-grid">
+        <div class="ir"><div class="ir-lbl">เลขที่ตำแหน่ง</div><div class="ir-val">${s.posno||'—'}</div></div>
+        <div class="ir"><div class="ir-lbl">วันบรรจุ/เริ่มงาน</div><div class="ir-val">${s.start||'—'}</div></div>
+        ${s.end?`<div class="ir"><div class="ir-lbl">สิ้นสุดสัญญา</div><div class="ir-val" style="color:var(--amber)">${s.end}</div></div>`:``}
+        <div class="ir" style="grid-column:1/-1"><div class="ir-lbl">ที่อยู่</div><div class="ir-val">${s.addr||'—'}</div></div>
+        <div class="ir" style="grid-column:1/-1"><div class="ir-lbl">หมายเหตุ / ประวัติ</div><div class="ir-val">${s.note||'—'}</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+        <button class="btn-red" onclick="if(confirm('ลบข้อมูล ${s.prefix}${s.fname} ${s.lname} ใช่หรือไม่?')){closeModal('view-modal');deleteStaff('${s.id}')}">🗑️ ลบ</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn-o" onclick="closeModal('view-modal')">ปิด</button>
+          <button class="btn btn-p" onclick="closeModal('view-modal');editStaff('${s.id}')">✏️ แก้ไข</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('view-modal').classList.add('open');
+}
+
+function openAdd(){
+  editId=null;photoURL='';
+  ['f-prefix','f-type','f-fname','f-lname','f-pos','f-dept','f-level','f-posno','f-pid','f-dob','f-start','f-end','f-edu','f-major','f-tel','f-email','f-status','f-medal','f-addr','f-note']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='f-status'?'ปฏิบัติงาน':id==='f-prefix'?'นาย':id==='f-type'?'gov':id==='f-edu'?'ปริญญาตรี':''});
+  document.getElementById('pz-inner').innerHTML=`<div class="pz-icon">📷</div><div class="pz-txt">คลิกเพื่ออัปโหลดรูปถ่ายหน้าตรง</div><div class="pz-sub">รองรับ JPG, PNG — ขนาดไม่เกิน 3 MB</div>`;
+  document.getElementById('modal-title').textContent='เพิ่มข้อมูลบุคลากร';
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function editStaff(id){
+  const s=staffData.find(x=>String(x.id)===String(id));if(!s)return;
+  editId=s.id;photoURL=s.photo||'';
+  const map={prefix:'f-prefix',type:'f-type',fname:'f-fname',lname:'f-lname',pos:'f-pos',dept:'f-dept',level:'f-level',posno:'f-posno',pid:'f-pid',dob:'f-dob',start:'f-start',end:'f-end',edu:'f-edu',major:'f-major',tel:'f-tel',email:'f-email',status:'f-status',medal:'f-medal',addr:'f-addr',note:'f-note'};
+  Object.entries(map).forEach(([k,eid])=>{const el=document.getElementById(eid);if(el)el.value=s[k]||''});
+  document.getElementById('pz-inner').innerHTML=s.photo?`<img src="${s.photo}" class="pz-preview"><div class="pz-txt" style="margin-top:4px">คลิกเพื่อเปลี่ยนรูป</div>`:`<div class="pz-icon">📷</div><div class="pz-txt">คลิกเพื่ออัปโหลดรูปถ่าย</div>`;
+  document.getElementById('modal-title').textContent='แก้ไขข้อมูลบุคลากร';
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function previewPhoto(inp){
+  const f=inp.files[0];if(!f)return;
+  if(f.size>3*1024*1024){showToast('ไฟล์ใหญ่เกิน 3 MB','err');return}
+  const r=new FileReader();
+  r.onload=e=>{photoURL=e.target.result;document.getElementById('pz-inner').innerHTML=`<img src="${photoURL}" class="pz-preview"><div class="pz-txt" style="margin-top:4px">คลิกเพื่อเปลี่ยนรูป</div>`};
+  r.readAsDataURL(f);
+}
+
+async function saveStaff(){
+  const get=id=>document.getElementById(id)?.value||'';
+  if(!get('f-fname')||!get('f-lname')){showToast('กรุณากรอกชื่อและนามสกุล','err');return}
+  if(!get('f-pos')){showToast('กรุณากรอกตำแหน่ง','err');return}
+  const body={id:editId||'',prefix:get('f-prefix'),type:get('f-type'),fname:get('f-fname'),lname:get('f-lname'),pos:get('f-pos'),dept:get('f-dept'),level:get('f-level'),posno:get('f-posno'),pid:get('f-pid'),dob:get('f-dob'),start:get('f-start'),end:get('f-end'),edu:get('f-edu'),major:get('f-major'),tel:get('f-tel'),email:get('f-email'),status:get('f-status')||'ปฏิบัติงาน',medal:get('f-medal'),addr:get('f-addr'),note:get('f-note'),photo:photoURL,action:'save'};
+  document.getElementById('save-btn').textContent='⏳ กำลังบันทึก...';
+  document.getElementById('save-btn').disabled=true;
+  try {
+    await apiPost(body);
+    showToast(editId?'แก้ไขข้อมูลสำเร็จ':'เพิ่มบุคลากรสำเร็จ');
+    closeModal('add-modal');
+    await loadData();
+  } catch(e){
+    showToast('บันทึกไม่สำเร็จ: '+e.message,'err');
+  }
+  document.getElementById('save-btn').textContent='💾 บันทึกข้อมูล';
+  document.getElementById('save-btn').disabled=false;
+}
+
+async function deleteStaff(id){
+  showLoader('กำลังลบข้อมูล...');
+  try{
+    await api({action:'delete',id});
+    showToast('ลบข้อมูลสำเร็จ');
+    await loadData();
+  }catch(e){showToast('ลบไม่สำเร็จ: '+e.message,'err')}
+  hideLoader();
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function exportCSV(){
+  const h=['id','คำนำหน้า','ชื่อ','นามสกุล','ประเภท','ตำแหน่ง','ฝ่าย/กลุ่ม','ระดับ','เลขที่ตำแหน่ง','เลขบัตรประชาชน','วันเกิด','วันบรรจุ','วันสิ้นสุด','วุฒิ','สาขา','โทรศัพท์','อีเมล','สถานะ','เครื่องราช','ที่อยู่','หมายเหตุ'];
+  const rows=staffData.map(s=>[s.id,s.prefix,s.fname,s.lname,TLABEL[s.type]||s.type,s.pos,s.dept,s.level,s.posno,s.pid,s.dob,s.start,s.end,s.edu,s.major,s.tel,s.email,s.status,s.medal,s.addr,s.note].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv='\uFEFF'+[h.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='บุคลากรที่ดินปราจีนบุรี_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+loadData();
+</script>
+</body>
+</html>
