@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>ระบบบุคลากร — สำนักงานที่ดินจังหวัดปราจีนบุรี</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
@@ -16,6 +16,98 @@
   --amber:#b7780a;--amber-lt:#fdf3d7;
 }
 body{font-family:'Sarabun','Segoe UI',sans-serif;background:var(--off);color:var(--tx);font-size:14px;line-height:1.5}
+
+/* Login Page Styles */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0e4228 0%, #165f3a 100%);
+  padding: 20px;
+}
+.login-card {
+  background: white;
+  border-radius: 28px;
+  padding: 40px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.logo-icon {
+  width: 70px;
+  height: 70px;
+  background: var(--g600);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 36px;
+}
+.login-card h2 {
+  color: var(--g700);
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.login-sub {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 30px;
+}
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.input-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--g600);
+  margin-bottom: 6px;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: var(--g400);
+  box-shadow: 0 0 0 3px rgba(46,155,98,0.1);
+}
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--g600);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.login-btn:hover { background: var(--g700); }
+.login-error {
+  background: var(--red-lt);
+  color: var(--red);
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 15px;
+}
+.login-info {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #999;
+}
+
+/* Main App Styles (เหมือนเดิม) */
 .shell{display:flex;height:100vh;overflow:hidden}
 .sb{width:215px;flex-shrink:0;background:var(--g700);display:flex;flex-direction:column}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
@@ -37,6 +129,8 @@ body{font-family:'Sarabun','Segoe UI',sans-serif;background:var(--off);color:var
 .sb-foot{padding:10px;border-top:1px solid var(--g600)}
 .up{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--g600);border-radius:8px}
 .up-av{width:30px;height:30px;border-radius:50%;background:var(--g400);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.logout-btn{background:transparent;border:1px solid var(--g400);color:var(--g200);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;margin-left:8px}
+.logout-btn:hover{background:var(--g500);color:#fff}
 
 .sc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .sc{background:var(--white);border:1px solid var(--bdr);border-radius:9px;padding:13px 15px}
@@ -147,19 +241,16 @@ tr:hover td{background:var(--g50);cursor:pointer}
 .rep-card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:16px}
 .rep-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:12px}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--g700);color:#fff;padding:12px 20px;border-radius:9px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.err{background:var(--red)}
 
-/* LOADING */
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .loading-overlay.show{display:flex}
 .spinner{width:36px;height:36px;border:3px solid var(--g100);border-top-color:var(--g500);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-txt{font-size:13px;color:var(--tx2);font-weight:600}
 
-/* SETUP BANNER */
 .setup-banner{background:var(--amber-lt);border:1px solid #f5d898;border-radius:9px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px}
 .setup-banner .sb-icon{font-size:22px;flex-shrink:0}
 .setup-banner h3{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px}
@@ -174,13 +265,31 @@ tr:hover td{background:var(--g50);cursor:pointer}
 </head>
 <body>
 
-<!-- ⚠️ ตั้งค่า URL ของ Google Apps Script ที่นี่ -->
-<script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDs_iqlPWEOgO5QvnulXDmnvRxXa1EVgNQFXoTc8qXnlpt79oCIVlUNPiIzK46wyae/exec';
-  // วาง URL ที่ได้จากการ Deploy Apps Script แทน YOUR_APPS_SCRIPT_URL_HERE
-  // ตัวอย่าง: const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
-</script>
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+  <div class="login-card">
+    <div class="logo-icon">🏛️</div>
+    <h2>สำนักงานที่ดินจังหวัดปราจีนบุรี</h2>
+    <div class="login-sub">ระบบบริหารบุคลากร</div>
+    <div class="input-group">
+      <label>👤 ชื่อผู้ใช้</label>
+      <input type="text" id="loginUsername" placeholder="กรอกชื่อผู้ใช้">
+    </div>
+    <div class="input-group">
+      <label>🔒 รหัสผ่าน</label>
+      <input type="password" id="loginPassword" placeholder="กรอกรหัสผ่าน" onkeypress="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div id="loginError" class="login-error" style="display:none"></div>
+    <div class="login-info">
+      ⚡ ทดลองใช้: admin / admin123 (สิทธิ์ผู้ดูแลระบบ)<br>
+      หรือ user1 / user123 (สิทธิ์ทั่วไป)
+    </div>
+  </div>
+</div>
 
+<!-- Main App (ซ่อนไว้จนกว่าจะ Login สำเร็จ) -->
+<div id="mainApp" style="display:none">
 <div class="shell">
 <div class="sb">
   <div class="sb-head">
@@ -226,8 +335,12 @@ tr:hover td{background:var(--g50);cursor:pointer}
   </nav>
   <div class="sb-foot">
     <div class="up">
-      <div class="up-av">ผอ</div>
-      <div><div style="font-size:12px;color:#fff;font-weight:600">ผู้ดูแลระบบ</div><div style="font-size:10px;color:var(--g200)" id="sync-status">กำลังโหลด...</div></div>
+      <div class="up-av" id="userAvatar">👤</div>
+      <div>
+        <div style="font-size:12px;color:#fff;font-weight:600" id="userNameDisplay">ผู้ใช้</div>
+        <div style="font-size:10px;color:var(--g200)" id="sync-status">กำลังโหลด...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">🚪 ออกจากระบบ</button>
     </div>
   </div>
 </div>
@@ -253,7 +366,7 @@ tr:hover td{background:var(--g50);cursor:pointer}
       <div class="tw" style="padding:15px"><div style="font-size:13px;font-weight:600;margin-bottom:12px">บุคลากรตามฝ่าย/กลุ่ม</div><div id="chart-dept"><div style="color:var(--tx3);font-size:12px">กำลังโหลด...</div></div></div>
     </div>
     <div style="font-size:13px;font-weight:600;margin-bottom:8px">รายการล่าสุด</div>
-    <div class="tw"><table><thead><tr><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>สถานะ</th></tr></thead><tbody id="rec-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">กำลังโหลด...</td></tr></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>สถานะ</th></tr></thead><tbody id="rec-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">กำลังโหลด...</td></tr></tbody></table>
   </div>
 
   <div id="pg-staff" class="pg">
@@ -279,8 +392,10 @@ tr:hover td{background:var(--g50);cursor:pointer}
       </div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th style="width:44px">รูป</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>ระดับ</th><th>วันบรรจุ</th><th>สถานะ</th><th style="width:110px"></th></tr></thead>
-          <tbody id="staff-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">กำลังโหลด...</td></tr></tbody>
+          <thead><tr><th style="width:44px">รูป</th><th>ชื่อ-นามสกุล</th><th>ประเภท</th><th>ตำแหน่ง</th><th>ฝ่าย/กลุ่ม</th><th>ระดับ</th><th>วันบรรจุ</th><th>สถานะ</th><th style="width:110px"></th></tr>
+          </thead>
+          <tbody id="staff-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">กำลังโหลด...</td></tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -323,6 +438,7 @@ tr:hover td{background:var(--g50);cursor:pointer}
   </div>
 
   </div>
+</div>
 </div>
 </div>
 
@@ -399,54 +515,137 @@ tr:hover td{background:var(--g50);cursor:pointer}
 
 <script>
 // ===================== CONFIG =====================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDs_iqlPWEOgO5QvnulXDmnvRxXa1EVgNQFXoTc8qXnlpt79oCIVlUNPiIzK46wyae/exec';
+
+// ===================== AUTH =====================
+let currentUser = null;
+let currentRole = null;
+
+function showLoginError(msg) {
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.textContent = msg;
+  errorDiv.style.display = 'block';
+  setTimeout(() => errorDiv.style.display = 'none', 3000);
+}
+
+async function doLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  
+  if (!username || !password) {
+    showLoginError('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
+    return;
+  }
+  
+  showLoader('กำลังตรวจสอบข้อมูล...');
+  
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'login',
+        username: username,
+        password: password
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      currentUser = result.username;
+      currentRole = result.role;
+      
+      localStorage.setItem('hr_token', result.token);
+      localStorage.setItem('hr_user', result.username);
+      localStorage.setItem('hr_role', result.role);
+      localStorage.setItem('hr_name', result.fullname);
+      
+      document.getElementById('userNameDisplay').textContent = result.fullname || result.username;
+      document.getElementById('userAvatar').textContent = result.fullname ? result.fullname.charAt(0) : '👤';
+      
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      
+      loadData();
+    } else {
+      showLoginError(result.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+    }
+  } catch (error) {
+    showLoginError('เกิดข้อผิดพลาด: ' + error.message);
+  }
+  
+  hideLoader();
+}
+
+function logout() {
+  localStorage.removeItem('hr_token');
+  localStorage.removeItem('hr_user');
+  localStorage.removeItem('hr_role');
+  localStorage.removeItem('hr_name');
+  currentUser = null;
+  currentRole = null;
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+function checkAuth() {
+  const token = localStorage.getItem('hr_token');
+  const user = localStorage.getItem('hr_user');
+  const role = localStorage.getItem('hr_role');
+  const name = localStorage.getItem('hr_name');
+  
+  if (token && user) {
+    currentUser = user;
+    currentRole = role;
+    document.getElementById('userNameDisplay').textContent = name || user;
+    document.getElementById('userAvatar').textContent = name ? name.charAt(0) : '👤';
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+  }
+}
+
+// ===================== API =====================
+async function api(params){
+  const url = new URL(SCRIPT_URL);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+  const res = await fetch(url.toString());
+  const json = await res.json();
+  if(!json.ok) throw new Error(json.error||'API error');
+  return json.data;
+}
+
+async function apiPost(body){
+  const res = await fetch(SCRIPT_URL, {
+    method:'POST',
+    body:JSON.stringify(body),
+    headers:{'Content-Type':'application/json'}
+  });
+  const json = await res.json();
+  if(!json.ok) throw new Error(json.error||'API error');
+  return json.data;
+}
+
+// ===================== DATA =====================
+let staffData=[], curType='all', curStatus='all', editId=null, photoURL='';
+
 const PAGES={dash:'ภาพรวมบุคลากร',staff:'ทะเบียนบุคลากรทั้งหมด',org:'โครงสร้างองค์กร',rep:'รายงาน / สถิติ'};
 const TBADGE={gov:'t1',emp:'t2',perm:'t3',tmp:'t4'};
 const TLABEL={gov:'ข้าราชการ',emp:'พนักงานราชการ',perm:'ลูกจ้างประจำ',tmp:'ลูกจ้างชั่วคราว'};
 const AVC={gov:'#1f7d4e',emp:'#1a6aaa',perm:'#b7780a',tmp:'#8b2e2e'};
 const DEPTS=['ฝ่ายอำนวยการ','กลุ่มการเงินและบัญชี','ฝ่ายทะเบียน','ฝ่ายวิชาการและแผนที่','ฝ่ายรังวัดและทำแผนที่'];
 
-let staffData=[], curType='all', curStatus='all', editId=null, photoURL='';
-
-// ===================== API =====================
-async function api(params){
-  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
-    showToast('⚠️ ยังไม่ได้ตั้งค่า SCRIPT_URL','err');
-    throw new Error('No SCRIPT_URL');
-  }
-  const url=new URL(SCRIPT_URL);
-  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
-  const res=await fetch(url.toString());
-  const json=await res.json();
-  if(!json.ok) throw new Error(json.error||'API error');
-  return json.data;
-}
-
-async function apiPost(body){
-  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
-    showToast('⚠️ ยังไม่ได้ตั้งค่า SCRIPT_URL','err');
-    throw new Error('No SCRIPT_URL');
-  }
-  const res=await fetch(SCRIPT_URL,{
-    method:'POST',
-    body:JSON.stringify(body),
-    headers:{'Content-Type':'application/json'}
-  });
-  const json=await res.json();
-  if(!json.ok) throw new Error(json.error||'API error');
-  return json.data;
-}
-
-// ===================== DATA =====================
 async function loadData(){
   showLoader('กำลังโหลดข้อมูลจาก Google Sheets...');
   try {
-    if(!SCRIPT_URL||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
-      showSetupWarning();
-      hideLoader();
-      return;
-    }
     staffData = await api({action:'getAll'});
-    const now=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('sync-time').textContent='อัปเดต '+now;
     document.getElementById('sync-status').textContent='เชื่อมต่อแล้ว';
     renderDash(); renderStaff();
@@ -457,18 +656,6 @@ async function loadData(){
     document.getElementById('sync-status').textContent='ไม่สามารถเชื่อมต่อ';
   }
   hideLoader();
-}
-
-function showSetupWarning(){
-  document.getElementById('setup-warn').innerHTML=`
-    <div class="setup-banner">
-      <div class="sb-icon">⚙️</div>
-      <div>
-        <h3>ยังไม่ได้เชื่อมต่อ Google Sheets</h3>
-        <p>กรุณาทำตาม <strong>SETUP_GUIDE.txt</strong> เพื่อตั้งค่า Apps Script URL<br>
-        แล้วแก้ไข <code>SCRIPT_URL</code> ในไฟล์ HTML นี้ให้เป็น URL ที่ได้จากการ Deploy</p>
-      </div>
-    </div>`;
 }
 
 // ===================== UI HELPERS =====================
@@ -487,7 +674,6 @@ function avEl(p,type,f,l,sz,round){
 }
 function sBadge(st){const cl=st==='ปฏิบัติงาน'?'s-ok':st&&st.startsWith('ลา')?'s-lv':'s-re';return`<span class="sdot ${cl}"></span>${st||'—'}`}
 
-// ===================== NAVIGATION =====================
 function gp(id,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
@@ -502,7 +688,6 @@ function gp(id,el){
 function ft(t,el){document.querySelectorAll('#ftabs .tab').forEach(x=>x.classList.remove('on'));el.classList.add('on');curType=t;renderStaff()}
 function fp(s,el){document.querySelectorAll('.pills .pill').forEach(x=>x.classList.remove('on'));el.classList.add('on');curStatus=s;renderStaff()}
 
-// ===================== RENDER =====================
 function countBy(key){const m={};staffData.forEach(s=>{m[s[key]]=(m[s[key]]||0)+1});return m}
 
 function renderDash(){
@@ -525,7 +710,7 @@ function renderDash(){
     <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.pos}</td>
     <td>${s.dept}</td>
     <td>${sBadge(s.status)}</td>
-  </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">ยังไม่มีข้อมูล</td></tr>';
+  </table>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--tx3)">ยังไม่มีข้อมูล</td></tr>';
 }
 
 function renderStaff(){
@@ -546,7 +731,7 @@ function renderStaff(){
     <td style="font-size:12px;color:var(--tx2);white-space:nowrap">${s.start||'—'}</td>
     <td style="white-space:nowrap">${sBadge(s.status)}</td>
     <td onclick="event.stopPropagation()"><button class="view-btn" onclick="viewStaff('${s.id}')">ดู</button> <button class="edit-btn" onclick="editStaff('${s.id}')">แก้ไข</button></td>
-  </tr>`).join(''):`<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">ไม่พบข้อมูล</td></tr>`;
+  </tr>`).join(''):'<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--tx3)">ไม่พบข้อมูล</td></tr>';
 }
 
 function renderOrg(){
@@ -617,7 +802,6 @@ function renderRep(){
     <div style="background:var(--g50);border:1px solid var(--bdr);border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:600;color:var(--tx2)">${lv}</div><div style="font-size:12px;color:var(--tx2)">กำลังลาอยู่</div></div>`;
 }
 
-// ===================== CRUD =====================
 function viewStaff(id){
   const s=staffData.find(x=>String(x.id)===String(id));if(!s)return;
   document.getElementById('view-content').innerHTML=`
@@ -730,7 +914,8 @@ function exportCSV(){
 }
 
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
-loadData();
+
+checkAuth();
 </script>
 </body>
 </html>
